@@ -10,6 +10,7 @@ const GET_MOVIES = gql`
     movies {
       id
       medium_cover_image
+      isLiked @client
     }
   }
 `;
@@ -17,36 +18,47 @@ const GET_MOVIES = gql`
 //============================================== styled-components
 
 const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  height: 600px;
+`;
+const Header = styled.header`
+  background-image: linear-gradient(-45deg, #d754ab, #fd723a);
+  height: 45vh;
 
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
-`;
-const Header = styled.div`
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: 100%;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: tomato;
+  color: black;
 `;
 const Title = styled.h1`
-  margin-bottom: 10px;
-  font-size: 42px;
+  font-size: 60px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: white;
 `;
-const SubTitle = styled.h3`
-  font-size: 24px;
+const Subtitle = styled.h3`
+  font-size: 35px;
+  color: white;
 `;
-const Loading = styled.p`
-  font-size: 36px;
-  margin-top: 20px;
-  color: #adb5bd;
+const Loading = styled.div`
+  font-size: 18px;
+  opacity: 0.5;
+  font-weight: 500;
+  margin-top: 10px;
 `;
+
+const Movies = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 25px;
+  width: 60%;
+  position: relative;
+`;
+
 export default () => {
   const { loading, data } = useQuery(GET_MOVIES);
 
@@ -55,12 +67,21 @@ export default () => {
       <Container>
         <Header>
           <Title>Apollo 2020</Title>
-          <SubTitle>I Love GraphQL</SubTitle>
+          <Subtitle>I Love GraphQL</Subtitle>
         </Header>
         {loading && <Loading>Loading...</Loading>}
-        {!loading &&
-          data.movies &&
-          data.movies.map((m) => <Movie key={m.id} id={m.id} />)}
+
+        <Movies>
+          {data?.movies?.map((m) => (
+            <Movie
+              key={m.id}
+              id={m.id}
+              isLiked={m.isLiked}
+              bg={m.medium_cover_image}
+            />
+          ))}
+          {/* {console.log(data.movies)} */}
+        </Movies>
       </Container>
     </>
   );
